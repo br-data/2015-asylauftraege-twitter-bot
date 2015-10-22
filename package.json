@@ -1,0 +1,26 @@
+{
+  "author": "Steffen Kühne",
+  "name": "rss-to-twitter",
+  "description": "Node.js app to tweet new items from a RSS feed",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:team_aquarium/rss-to-twitter.git"
+  },
+  "dependencies": {
+    "express" : "2.5.x",
+    "formidable" : "1.0.x",
+    "htmlparser" : "1.7.x",
+    "jsdom" : "0.2.x",
+    "mime" : "1.2.x",
+    "oauth" : "0.9.x",
+    "qs" : "0.4.x",
+    "request" : "2.9.x",
+    "twit" : "" 
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
