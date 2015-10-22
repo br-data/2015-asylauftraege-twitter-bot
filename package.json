@@ -8,15 +8,15 @@
     "url": "git@bitbucket.org:team_aquarium/rss-to-twitter.git"
   },
   "dependencies": {
-    "express" : "2.5.x",
-    "formidable" : "1.0.x",
-    "htmlparser" : "1.7.x",
-    "jsdom" : "0.2.x",
-    "mime" : "1.2.x",
-    "oauth" : "0.9.x",
-    "qs" : "0.4.x",
-    "request" : "2.9.x",
-    "twit" : "" 
+    "express": "^4.13.3",
+    "formidable": "*",
+    "htmlparser": "*",
+    "jsdom": "^7.0.1",
+    "mime": "^1.3.4",
+    "oauth": "*",
+    "qs": "^5.2.0",
+    "request": "^2.65.0",
+    "twit": "*"
   },
   "devDependencies": {},
   "optionalDependencies": {},
