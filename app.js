@@ -30,17 +30,6 @@ var parser = new htmlparser.Parser(handler);
 
 function handleFeed(items) {
 
-    items =   [{ id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355333-2015:TEXT:DE:HTML',
-    title: '355333-2015: Deutschland-Kiel: Dienstleistungen von Sicherheitsdiensten',
-    link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355333-2015:TEXT:DE:HTML',
-    description: 'Datum der Veröffentlichung (PD): 09-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    pubDate: 'Sat Oct 24 2015 09:01:00 GMT+0200 (CEST)' },
-    { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355330-2015:TEXT:DE:HTML',
-    title: '355330-2015: Deutschland-Kiel: Dienstleistungen des Sozialwesens',
-    link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355330-2015:TEXT:DE:HTML',
-    description: 'Datum der Veröffentlichung (PD): 09-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    pubDate: 'Sat Oct 24 2015 09:01:00 GMT+0200 (CEST)' }];
-
     for (var key in items) {
 
         items[key].title = beautifyTitle(items[key].title);
