@@ -85,7 +85,7 @@ setInterval(function() {
         var items = handler.dom.items;
         var itemsToPublish = []; // Array
 
-        for(key in items){
+        for(var key in items){
 
             //console.log(prop + ': ' + items[prop].title + ' ' + items[prop].link + '\n');
             var itemDate = new Date(items[key].pubDate);
