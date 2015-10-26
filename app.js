@@ -94,7 +94,7 @@ function getItemInfo(item, callback) {
 
             if (addressEl) {
 
-                item.company = addressEl.split('<br>')[0];
+                item.company = $('<p>').html(addressEl.split('<br>')[0]).text();
             }
 
             callback(item);
