@@ -25,75 +25,32 @@ var parser = new htmlparser.Parser(handler);
 
 (function init() {
 
-    getRSSFeed(handleFeed);
+    getFeed(handleFeed);
 })();
 
-// function to sort of dates
-function compareDates(a, b) {
+function handleFeed(items) {
 
-    var aDate = new Date(a.pubDate);
-    var bDate = new Date(b.pubDate);
+    items =   [{ id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355333-2015:TEXT:DE:HTML',
+    title: '355333-2015: Deutschland-Kiel: Dienstleistungen von Sicherheitsdiensten',
+    link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355333-2015:TEXT:DE:HTML',
+    description: 'Datum der Veröffentlichung (PD): 09-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
+    pubDate: 'Sat Oct 24 2015 09:01:00 GMT+0200 (CEST)' },
+    { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355330-2015:TEXT:DE:HTML',
+    title: '355330-2015: Deutschland-Kiel: Dienstleistungen des Sozialwesens',
+    link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:355330-2015:TEXT:DE:HTML',
+    description: 'Datum der Veröffentlichung (PD): 09-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
+    pubDate: 'Sat Oct 24 2015 09:01:00 GMT+0200 (CEST)' }];
 
-    if (aDate < bDate) { return -1; }
-    if (aDate > bDate) { return 1; }
+    for (var key in items) {
 
-    return 0;
+        items[key].title = beautifyTitle(items[key].title);
+        items[key].location = getLocation(items[key].title);
+        items[key].title = removeLocation(items[key].title);
+        items[key].company = getItemInfo(items[key], handleItem);
+    }
 }
 
-// get the date of the last run
-function getLatestPostedItemDate() {
-
-    var dateString = fs.readFileSync('lastestPostedDate.txt').toString();
-    return new Date(dateString);
-}
-
-// save the date of the last run
-function setLatestPostedItemDate(date) {
-
-    lastestPostedItemDate = date;
-    fs.writeFile('lastestPostedDate.txt', lastestPostedItemDate);
-    return true;
-}
-
-// post item to twitter
-function publishToTwitter(item) {
-
-    var tweet = item.title + ' ' + item.link;
-    
-    twitter.post('statuses/update', { status: tweet }, function (err, data, response) {
-             
-        if (err) { console.log(err); }
-         
-        console.log(data);
-     });
-}
-
-function getCompanyName(item, callback) {
-
-    item.company = '';
-
-    request(item.link, { jar: true }, function (err, res, body) {
-
-        if (!err && res.statusCode == 200) {
-
-            var $ = cheerio.load(body);
-            var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
-
-            if (addressEl) {
-
-                item.company = addressEl.split('<br>')[0];
-            }
-
-            callback(item);
-
-        } else {
-
-            console.log(err.message);
-        }
-    });
-}
-
-function getRSSFeed(callback) {
+function getFeed(callback) {
 
     var items;
     var itemsToPublish = [];
@@ -126,27 +83,93 @@ function getRSSFeed(callback) {
     });
 }
 
-function handleFeed(items) {
-
-    for (var key in items) {
-
-        items[key].company = getCompanyName(items[key], handleItem);
-    }
-}
-
 function handleItem(item) {
 
-    console.log(item.company);
-}
+    var tweet = item.company + ': ' + item.title + ' in ' + item.location + ': ' + item.link;
+    console.log(tweet, tweet.length);
 
-function handleTweet(data) {
-
-    console.log(itemsToPublish[i].pubDate + ' ' + itemsToPublish[i].title);
     // publishToTwitter(itemsToPublish[i]);
     // setLatestPostedItemDate(itemsToPublish[i].pubDate);
 }
 
+function getItemInfo(item, callback) {
 
+    item.company = '';
 
+    request(item.link, { jar: true }, function (err, res, body) {
 
+        if (!err && res.statusCode == 200) {
 
+            var $ = cheerio.load(body);
+            var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
+
+            if (addressEl) {
+
+                item.company = addressEl.split('<br>')[0];
+            }
+
+            callback(item);
+
+        } else {
+
+            console.log(err.message);
+        }
+    });
+}
+
+function beautifyTitle(str) {
+
+    return str.replace(/.*\d:\s/, '');
+}
+
+function getLocation(str) {
+
+    str = str.match(/Deutschland-(.*):/);
+
+    return str ? str[1] : '';
+}
+
+function removeLocation(str) {
+
+    return str.replace(/Deutschland-(.*):\s/, '');
+}
+
+// post item to twitter
+function publishToTwitter(item) {
+
+    var tweet = item.title + ' ' + item.link;
+    
+    twitter.post('statuses/update', { status: tweet }, function (err, data, response) {
+             
+        if (err) { console.log(err); }
+         
+        console.log(data);
+     });
+}
+
+// get the date of the last run
+function getLatestPostedItemDate() {
+
+    var dateString = fs.readFileSync('lastestPostedDate.txt').toString();
+    return new Date(dateString);
+}
+
+// save the date of the last run
+function setLatestPostedItemDate(date) {
+
+    lastestPostedItemDate = date;
+    fs.writeFile('lastestPostedDate.txt', lastestPostedItemDate);
+    return true;
+}
+
+// function to sort of dates
+function compareDates(a, b) {
+
+    var aDate = new Date(a.pubDate);
+    var bDate = new Date(b.pubDate);
+
+    if (aDate < bDate) { return -1; }
+    if (aDate > bDate) { return 1; }
+
+    return 0;
+}
