@@ -9,4 +9,4 @@ Der Bot twittert neue Großaufträge im Bereich Flüchtlinge/Asyl, welche aus de
 3. `node app.js` ausführen, um den Scraper zu starten
 
 ### Live
-Die Anwendung liegt unter '/var/www/app/asylindustrie-twitter-bot/' auf dem BR Data Server und wird einmal täglich von einem Jenkins Job ausgeführt.
+Die Anwendung liegt unter '/var/www/app/asylauftraege-twitter-bot/' auf dem BR Data Server und wird einmal täglich von einem Jenkins Job ausgeführt.

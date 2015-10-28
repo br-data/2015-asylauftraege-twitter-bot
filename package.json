@@ -1,11 +1,11 @@
 {
   "author": "Steffen Kühne",
-  "name": "rss-to-twitter",
+  "name": "asylauftraege-twitter-bot",
   "description": "Node.js app to tweet new items from a RSS feed",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:team_aquarium/rss-to-twitter.git"
+    "url": "git@bitbucket.org:team_aquarium/asylauftraege-twitter-bot.git"
   },
   "dependencies": {
     "cheerio": "^0.19.0",
