@@ -19,215 +19,23 @@ var twitter = new Twit({
 // Get date of latest posted article
 var lastestPostedItemDate = getLatestPostedItemDate();
 
-// Needed for RSS parsing
 var handler = new htmlparser.RssHandler();
 var parser = new htmlparser.Parser(handler);
 
 (function init() {
 
-    //getFeed(handleFeed);
-    handleFeed();
+    getFeed(handleFeed);
 })();
 
 function handleFeed(items) {
 
-    items = [
-    { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:378174-2015:TEXT:DE:HTML',
-      title: 'Dienstleistungen für Unternehmen: Recht, Marketing, Consulting, Einstellungen, Druck und Sicherheit',
-      link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:378174-2015:TEXT:DE:HTML',
-      description: 'Datum der Veröffentlichung (PD): 27-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-      pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-      location: 'Karlsruhe',
-      company: 'b.i.g sicherheit GmbH Objekt- und Personenschutz' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371040-2015:TEXT:DE:HTML',
-    //   title: 'Sonstige gemeinschaftliche, soziale und persönliche Dienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371040-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'Johanniter-Unfall-Hilfe e. V. Regionalverband Zwickau/Vogtland' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:361877-2015:TEXT:DE:HTML',
-    //   title: 'Verpflegungsdienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:361877-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 14-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Kiel',
-    //   company: 'Vivanti GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376267-2015:TEXT:DE:HTML',
-    //   title: 'Verwaltung von Unterkünften',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376267-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 24-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'München',
-    //   company: 'Fairprice Hostels GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:377457-2015:TEXT:DE:HTML',
-    //   title: 'Heizöle',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:377457-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 27-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Detmold',
-    //   company: 'Lausen Mineralöl- und Schmierstoffhandel GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:370299-2015:TEXT:DE:HTML',
-    //   title: 'Mobile, modulare Containergebäude',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:370299-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Burgdorf',
-    //   company: 'SILOCO GmbH & Co. KG' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:359898-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Hotel- und Gaststättengewerbes und des Einzelhandels',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:359898-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 13-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Koblenz',
-    //   company: 'Klüh Catering GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376188-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen von Sicherheitsdiensten',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376188-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 24-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'München',
-    //   company: 'ESD Sicherheitsdienst GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369114-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Sozialwesens und zugehörige Dienstleistungen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369114-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 20-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'Diakoniewerk Westsachsen gGmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371231-2015:TEXT:DE:HTML',
-    //   title: 'Allgemeine Personaldienstleistungen für die öffentliche Verwaltung',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371231-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Düsseldorf',
-    //   company: 'Randstad Outsourcing GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:364069-2015:TEXT:DE:HTML',
-    //   title: 'Diverse Möbel',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:364069-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 16-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Hamburg',
-    //   company: 'Meier Medizintechnik' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371059-2015:TEXT:DE:HTML',
-    //   title: 'Verpflegungsdienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371059-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Siegen',
-    //   company: 'Fischer Cateringservice & Events' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369115-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Sozialwesens und zugehörige Dienstleistungen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369115-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 20-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'Pandechaion GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:365361-2015:TEXT:DE:HTML',
-    //   title: 'Bau von Wohnheimen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:365361-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 17-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Heilbronn',
-    //   company: 'FAGSi Vertriebs und Vermietungs GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369119-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Sozialwesens und zugehörige Dienstleistungen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:369119-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 20-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'European Homecare GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371068-2015:TEXT:DE:HTML',
-    //   title: 'Sonstige gemeinschaftliche, soziale und persönliche Dienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371068-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'European Homecare GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371061-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Sozialwesens und zugehörige Dienstleistungen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:371061-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 21-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Zwickau',
-    //   company: 'Diakoniewerk Westsachsen gGmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:368475-2015:TEXT:DE:HTML',
-    //   title: 'Verpflegungsdienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:368475-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 20-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Rostock',
-    //   company: 'Sodexo SCS GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376263-2015:TEXT:DE:HTML',
-    //   title: 'Unterricht in berufsbildenden weiterführenden Schulen',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:376263-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 24-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Weiden in der Oberpfalz',
-    //   company: 'Kolping Bildungswerk Weiden' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:359875-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen von Detekteien und Sicherheitsdiensten',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:359875-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 13-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Karlsruhe',
-    //   company: 'b.i.g sicherheit gmbh, Objekt- und Personenschutz' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:378172-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen für Unternehmen: Recht, Marketing, Consulting, Einstellungen, Druck und Sicherheit',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:378172-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 27-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Karlsruhe',
-    //   company: 'Romak Deutschland GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:367122-2015:TEXT:DE:HTML',
-    //   title: 'Hausmeisterdienste',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:367122-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 17-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Peine',
-    //   company: 'Dienstleistungen Deike' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:364696-2015:TEXT:DE:HTML',
-    //   title: 'Gebäudereinigung',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:364696-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 16-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Velbert',
-    //   company: 'European Homecare GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:373242-2015:TEXT:DE:HTML',
-    //   title: 'Komplett- oder Teilbauleistungen im Hochbau sowie Tiefbauarbeiten',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:373242-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 23-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Leipzig',
-    //   company: 'Köster GmbH' },
-    // { id: 'http://ted.europa.eu/udl?uri=TED:NOTICE:367151-2015:TEXT:DE:HTML',
-    //   title: 'Dienstleistungen des Hotel- und Gaststättengewerbes und des Einzelhandels',
-    //   link: 'http://ted.europa.eu/udl?uri=TED:NOTICE:367151-2015:TEXT:DE:HTML',
-    //   description: 'Datum der Veröffentlichung (PD): 17-10-2015 | Frist (DT):  | Dokument (TD): Vergebene Aufträge',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: 'Koblenz',
-    //   company: 'Sander Catering GmbH' },
-    // { id: 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de/fullSearch',
-    //   title: 'Mehr...',
-    //   link: 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de/fullSearch',
-    //   description: 'In TED gibt es mehrere Veröffentlichungen, die diese Kriterien erfüllen. Um weitere Informationen zu erhalten, klicken Sie bitte auf den Link',
-    //   pubDate: 'Tue Oct 27 2015 09:01:00 GMT+0100 (CET)',
-    //   location: '',
-    //   company: undefined }
-    ];
-
     for (var key in items) {
 
-        handleItem(items[key]);
-    }   
-
-    // for (var key in items) {
-
-    //     items[key].title = beautifyTitle(items[key].title);
-    //     items[key].location = getLocation(items[key].title);
-    //     items[key].title = removeLocation(items[key].title);
-    //     items[key].company = getItemInfo(items[key], handleItem);
-    // }
+        items[key].title = beautifyTitle(items[key].title);
+        items[key].location = getLocation(items[key].title);
+        items[key].title = removeLocation(items[key].title);
+        items[key].company = getItemInfo(items[key], handleItem);
+    }
 }
 
 function getFeed(callback) {
@@ -265,9 +73,11 @@ function getFeed(callback) {
 
 function handleItem(item) {
 
-    shortenTweet(item, 140, postToTwitter);
+    if (item.company) {
 
-    // setLatestPostedItemDate(itemsToPost[i].pubDate);
+        shortenTweet(item, 160, postToTwitter);
+        setLatestPostedItemDate(item.pubDate);
+    }
 }
 
 function getItemInfo(item, callback) {
@@ -321,7 +131,7 @@ function beautifyCompanyName(str) {
 
 function shortenTweet(item, length, callback) {
 
-    item.tweet = 'Neuer Auftrag: ' + item.company + ': ' + item.title + ' (' + item.location + '): ' + item.link + ' #asyl';
+    item.tweet = '#' + item.location + ': Auftrag für ' + item.company + ': ' + item.title + ' ' + item.link + ' #asyl';
 
     if (item.tweet.length > length) {
 
@@ -329,7 +139,7 @@ function shortenTweet(item, length, callback) {
 
         if (item.title && isShortable) {
 
-            var newTitle = item.title.split(' ').slice(0, -1).join(' ');
+            var newTitle = item.title.split(' ').slice(0, -2).join(' ').concat(' …').trim();
 
             if (newTitle.length && newTitle.length < item.title.length) {
 
@@ -342,7 +152,7 @@ function shortenTweet(item, length, callback) {
 
         if (item.company && !isShortable) {
 
-            item.company = item.company.split(' ').slice(0, -1).join(' ');
+            item.company = item.company.split(' ').slice(0, -1).join(' ').concat(' …').trim();
         }
 
         shortenTweet(item, length, callback);
@@ -355,14 +165,10 @@ function shortenTweet(item, length, callback) {
 // post item to twitter
 function postToTwitter(item) {
 
-    console.log(item);
-
-    // twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
+    twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
              
-    //     if (err) { console.log(err); }
-         
-    //     console.log(data);
-    //  });
+        if (err) { console.log(err); }
+    });
 }
 
 // get the date of the last run
