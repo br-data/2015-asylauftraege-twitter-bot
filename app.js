@@ -179,7 +179,7 @@ var Twit = require('twit');
     // get the date of the last run
     function getLatestPostedItemDate() {
 
-        var dateString = fs.readFileSync('lastestPostedDate.txt').toString();
+        var dateString = fs.readFileSync('./lastestPostedDate.txt').toString();
         return new Date(dateString);
     }
 
@@ -187,7 +187,7 @@ var Twit = require('twit');
     function setLatestPostedItemDate(date) {
 
         lastestPostedItemDate = date;
-        fs.writeFile('lastestPostedDate.txt', lastestPostedItemDate);
+        fs.writeFile('./lastestPostedDate.txt', lastestPostedItemDate);
         return true;
     }
 
