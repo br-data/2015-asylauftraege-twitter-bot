@@ -169,7 +169,9 @@ function rssToTwitter() {
     function postToTwitter(item) {
 
         twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
-                 
+            
+            console.log("New tweet: ", item.tweet);
+
             if (err) { console.log(err); }
         });
     }
