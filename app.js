@@ -5,7 +5,7 @@ var htmlparser = require('htmlparser');
 var fs = require('fs');
 var Twit = require('twit');
 
-function rssToTwitter() {
+(function rssToTwitter() {
     'use strict';
 
     // Config variables
@@ -207,4 +207,4 @@ function rssToTwitter() {
 
         return JSON.parse(JSON.stringify(obj));
     } 
-}
+})();
