@@ -1,8 +1,9 @@
+var fs = require('fs');
+var path = require('path');
+var url = require('url');
 var request = require('request');
 var cheerio = require('cheerio');
-var url = require('url');
 var htmlparser = require('htmlparser');
-var fs = require('fs');
 var Twit = require('twit');
 
 (function rssToTwitter() {
@@ -31,6 +32,8 @@ var Twit = require('twit');
     })();
 
     function handleFeed(items) {
+
+        items.length = 5;
 
         for (var key in items) {
 
@@ -168,18 +171,20 @@ var Twit = require('twit');
     // post item to twitter
     function postToTwitter(item) {
 
-        twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
-            
-            console.log("New tweet: ", item.tweet);
+        console.log(item.tweet);
 
-            if (err) { console.log(err); }
-        });
+        // twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
+            
+        //     console.log("New tweet: ", item.tweet);
+
+        //     if (err) { console.log(err); }
+        // });
     }
 
     // get the date of the last run
     function getLatestPostedItemDate() {
 
-        var dateString = fs.readFileSync(__dirname + '/lastestPostedDate.txt').toString();
+        var dateString = fs.readFileSync(path.join(__dirname, '/lastestPostedDate.txt')).toString();
         return new Date(dateString);
     }
 
@@ -187,7 +192,7 @@ var Twit = require('twit');
     function setLatestPostedItemDate(date) {
 
         lastestPostedItemDate = date;
-        fs.writeFile(__dirname + '/lastestPostedDate.txt', lastestPostedItemDate);
+        fs.writeFile(path.join(__dirname, '/lastestPostedDate.txt'), lastestPostedItemDate);
         return true;
     }
 
