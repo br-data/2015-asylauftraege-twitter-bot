@@ -171,14 +171,12 @@ var Twit = require('twit');
     // post item to twitter
     function postToTwitter(item) {
 
-        console.log(item.tweet);
-
-        // twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
+        twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
             
-        //     console.log("New tweet: ", item.tweet);
+            console.log("New tweet: ", item.tweet);
 
-        //     if (err) { console.log(err); }
-        // });
+            if (err) { console.log(err); }
+        });
     }
 
     // get the date of the last run
