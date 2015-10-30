@@ -14,10 +14,10 @@ var Twit = require('twit');
 
     var twitter = new Twit({
 
-        consumer_key: process.env.CONSUMER_KEY                  || 'engp8PvvP9kMEb8MrE2qT8DPw',
-        consumer_secret: process.env.CONSUMER_SECRET            || 'HbRprEITtD3K25Hn47P6qzzaoLuCSXURrnsHm9GfknK0cTQe5M',
-        access_token: process.env.ACCESS_TOKEN                  || '3577194683-jmBzibEJM9gEcy9QqSfpmlYzxehXtlzeb9xYUUm',
-        access_token_secret: process.env.ACCESS_TOKEN_SECRET    || 'FgsUeQxn1sg5Agx0jlxkpB4qb5BxWfYYnl78XcGAJ6mtT'
+        consumer_key: process.env.CONSUMER_KEY                  || 'zxgsFhtGxMlWwae7HToHfdXeD',
+        consumer_secret: process.env.CONSUMER_SECRET            || 'OaZwjigNLSqP6Na7jb18JDqP79LES7514byivUmnFE81cHyYFW',
+        access_token: process.env.ACCESS_TOKEN                  || '4010493202-A1zN0IpJyA1P8Hrm4rXJUR4YwgzayxOueTOuPno',
+        access_token_secret: process.env.ACCESS_TOKEN_SECRET    || 'UZUVMCeFw6c5cup14HxdCJtX76l3LNmZcAd7anZxhBAIi'
     });
 
     // Get date of latest posted article
@@ -32,8 +32,6 @@ var Twit = require('twit');
     })();
 
     function handleFeed(items) {
-
-        items.length = 5;
 
         for (var key in items) {
 
