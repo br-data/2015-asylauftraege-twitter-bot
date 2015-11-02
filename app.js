@@ -9,9 +9,8 @@ var Twit = require('twit');
 (function rssToTwitter() {
     'use strict';
 
-    // Config variables
+    // Configuration
     var rssUrl = 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de';
-
     var twitter = new Twit({
 
         consumer_key: process.env.CONSUMER_KEY                  || 'zxgsFhtGxMlWwae7HToHfdXeD',
@@ -21,7 +20,7 @@ var Twit = require('twit');
     });
 
     // Get date of latest posted article
-    var lastestPostedItemDate = getLatestPostedItemDate();
+    var lastPostedDate = getPostedDate();
 
     var handler = new htmlparser.RssHandler();
     var parser = new htmlparser.Parser(handler);
@@ -29,6 +28,7 @@ var Twit = require('twit');
     (function init() {
 
         getFeed(handleFeed);
+        setPostedDate(new Date());
     })();
 
     function handleFeed(items) {
@@ -42,6 +42,16 @@ var Twit = require('twit');
         }
     }
 
+    function handleItem(item) {
+
+        // Tweet only new entries 
+        if (item.company && item.date > lastPostedDate) {
+
+            shortenTweet(item, 160, postToTwitter);
+        }
+    }
+
+    // Get the RSS feed
     function getFeed(callback) {
 
         var items;
@@ -58,15 +68,10 @@ var Twit = require('twit');
 
                 for (var key in items) {
 
-                    var itemDate = new Date(items[key].pubDate);
-                    
-                    if (itemDate > lastestPostedItemDate) {
-
-                        itemsToPost.push(items[key]);
-                    }
+                    itemsToPost.push(items[key]);
                 }
 
-                callback(itemsToPost.sort(compareDates));
+                callback(itemsToPost);
 
             } else {
 
@@ -75,29 +80,30 @@ var Twit = require('twit');
         });
     }
 
-    function handleItem(item) {
-
-        if (item.company) {
-
-            shortenTweet(item, 160, postToTwitter);
-            setLatestPostedItemDate(item.pubDate);
-        }
-    }
-
+    // Get company name and publication date from the tender page
     function getItemInfo(item, callback) {
 
         item.company = '';
+        item.date = '';
 
         request(item.link, { jar: true }, function (err, res, body) {
 
             if (!err && res.statusCode == 200) {
 
                 var $ = cheerio.load(body);
+
                 var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
+                var dateEl = $('.date').text();
 
                 if (addressEl) {
 
                     item.company = $('<p>').html(addressEl.split('<br>')[0]).text();
+                }
+
+                if (dateEl) {
+
+                    dateEl = dateEl.split('/').reverse().join();
+                    item.date = new Date(dateEl);
                 }
 
                 callback(item);
@@ -166,55 +172,60 @@ var Twit = require('twit');
         }
     }
 
-    // post item to twitter
     function postToTwitter(item) {
 
-        // twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
-            
-        //     console.log("New tweet: ", item.tweet);
-
-        //     if (err) { console.log(err); }
-        // });
-    }
-
-    // get the date of the last run
-    function getLatestPostedItemDate() {
-
-    var dateString;
-
-    try {
-
-        dateString = fs.readFileSync(path.join(__dirname, '/lastestPostedDate.txt').toString(), 'utf8');
-    } catch (e) {
-
-        if (e.code === 'ENOENT') {
-
-            console.log('Cannot read ', path.join(__dirname, '/lastestPostedDate.txt'));
-        } else {
-
-            throw e;
-        }
-    }
+        twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
         
-        return new Date(dateString);
-    }
-
-    // save the date of the last run
-    function setLatestPostedItemDate(date) {
-
-        console.log(date);
-
-        lastestPostedItemDate = date;
-
-        fs.writeFile(path.join(__dirname, '/lastestPostedDate.txt'), lastestPostedItemDate, function (err) {
+            console.log("New tweet: ", item.tweet);
 
             if (err) { console.log(err); }
-
-            return true;
         });
     }
 
-    // function to sort of dates
+    // Get the last updated date from file
+    function getPostedDate() {
+
+        var dateString;
+        var location = path.join(__dirname, '/lastPostedDate.txt');
+
+        try {
+
+            dateString = fs.readFileSync(location, 'utf8');
+        } catch (err) {
+
+            if (err.code === 'ENOENT') {
+
+                console.log('Cannot read ', location);
+            } else {
+
+                throw err;
+            }
+        }
+
+        return new Date(dateString);
+    }
+
+    // Save the last updated date to file
+    function setPostedDate(date) {
+
+        var location = path.join(__dirname, '/lastPostedDate.txt');
+
+        try {
+
+            fs.writeFileSync(location, date, 'utf8');
+        } catch (err) {
+
+            if (err.code === 'ENOENT') {
+
+                console.log('Cannot write ', location);
+            } else {
+
+                throw err;
+            }
+        }
+    }
+
+    // Sort dates
     function compareDates(a, b) {
 
         var aDate = new Date(a.pubDate);
@@ -226,6 +237,7 @@ var Twit = require('twit');
         return 0;
     }
 
+    // Clone an object
     function clone(obj) {
 
         return JSON.parse(JSON.stringify(obj));
