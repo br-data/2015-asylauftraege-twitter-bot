@@ -169,27 +169,49 @@ var Twit = require('twit');
     // post item to twitter
     function postToTwitter(item) {
 
-        twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
+        // twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
             
-            console.log("New tweet: ", item.tweet);
+        //     console.log("New tweet: ", item.tweet);
 
-            if (err) { console.log(err); }
-        });
+        //     if (err) { console.log(err); }
+        // });
     }
 
     // get the date of the last run
     function getLatestPostedItemDate() {
 
-        var dateString = fs.readFileSync(path.join(__dirname, '/lastestPostedDate.txt')).toString();
+    var dateString;
+
+    try {
+
+        dateString = fs.readFileSync(path.join(__dirname, '/lastestPostedDate.txt').toString(), 'utf8');
+    } catch (e) {
+
+        if (e.code === 'ENOENT') {
+
+            console.log('Cannot read ', path.join(__dirname, '/lastestPostedDate.txt'));
+        } else {
+
+            throw e;
+        }
+    }
+        
         return new Date(dateString);
     }
 
     // save the date of the last run
     function setLatestPostedItemDate(date) {
 
+        console.log(date);
+
         lastestPostedItemDate = date;
-        fs.writeFile(path.join(__dirname, '/lastestPostedDate.txt'), lastestPostedItemDate);
-        return true;
+
+        fs.writeFile(path.join(__dirname, '/lastestPostedDate.txt'), lastestPostedItemDate, function (err) {
+
+            if (err) { console.log(err); }
+
+            return true;
+        });
     }
 
     // function to sort of dates
