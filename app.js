@@ -21,10 +21,6 @@ var Twit = require('twit');
 
     // Get date of latest posted article
     var lastPostedDate = getPostedDate();
-    // Set time to zero
-    lastPostedDate.setHours(0);
-    lastPostedDate.setMinutes(0);
-    lastPostedDate.setSeconds(0);
 
     var handler = new htmlparser.RssHandler();
     var parser = new htmlparser.Parser(handler);
