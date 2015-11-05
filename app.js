@@ -21,6 +21,10 @@ var Twit = require('twit');
 
     // Get date of latest posted article
     var lastPostedDate = getPostedDate();
+    // Set time to zero
+    lastPostedDate.setHours(0);
+    lastPostedDate.setMinutes(0);
+    lastPostedDate.setSeconds(0);
 
     var handler = new htmlparser.RssHandler();
     var parser = new htmlparser.Parser(handler);
@@ -45,7 +49,7 @@ var Twit = require('twit');
     function handleItem(item) {
 
         // Tweet only new entries 
-        if (item.company && item.date > lastPostedDate) {
+        if (item.company && item.date >= lastPostedDate) {
 
             shortenTweet(item, 160, postToTwitter);
         }
@@ -113,30 +117,6 @@ var Twit = require('twit');
                 console.log(err.message);
             }
         });
-    }
-
-    function beautifyTitle(str) {
-
-        return str.replace(/.*\d:\s/, '');
-    }
-
-    function getLocation(str) {
-
-        str = str.match(/Deutschland-(.*?):/);
-
-        return str ? str[1] : '';
-    }
-
-    function removeLocation(str) {
-
-        return str.replace(/Deutschland-(.*?):\s/, '');
-    }
-
-    function beautifyCompanyName(str) {
-
-        str.replace('foo', '');
-
-        return str;
     }
 
     function shortenTweet(item, length, callback) {
@@ -223,6 +203,30 @@ var Twit = require('twit');
                 throw err;
             }
         }
+    }
+
+    function beautifyTitle(str) {
+
+        return str.replace(/.*\d:\s/, '');
+    }
+
+    function getLocation(str) {
+
+        str = str.match(/Deutschland-(.*?):/);
+
+        return str ? str[1] : '';
+    }
+
+    function removeLocation(str) {
+
+        return str.replace(/Deutschland-(.*?):\s/, '');
+    }
+
+    function beautifyCompanyName(str) {
+
+        str.replace('foo', '');
+
+        return str;
     }
 
     // Sort dates
