@@ -13,10 +13,10 @@ var Twit = require('twit');
     var rssUrl = 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de';
     var twitter = new Twit({
 
-        consumer_key: process.env.CONSUMER_KEY                  || '***REMOVED***',
-        consumer_secret: process.env.CONSUMER_SECRET            || '***REMOVED***',
-        access_token: process.env.ACCESS_TOKEN                  || '***REMOVED***',
-        access_token_secret: process.env.ACCESS_TOKEN_SECRET    || '***REMOVED***'
+        consumer_key: process.env.CONSUMER_KEY                  || 'zxgsFhtGxMlWwae7HToHfdXeD',
+        consumer_secret: process.env.CONSUMER_SECRET            || 'OaZwjigNLSqP6Na7jb18JDqP79LES7514byivUmnFE81cHyYFW',
+        access_token: process.env.ACCESS_TOKEN                  || '4010493202-A1zN0IpJyA1P8Hrm4rXJUR4YwgzayxOueTOuPno',
+        access_token_secret: process.env.ACCESS_TOKEN_SECRET    || 'UZUVMCeFw6c5cup14HxdCJtX76l3LNmZcAd7anZxhBAIi'
     });
 
     // Get date of latest posted article
