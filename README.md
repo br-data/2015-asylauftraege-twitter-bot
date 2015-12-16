@@ -1,8 +1,8 @@
 # Asylaufträge Twitter-Bot
 Der Bot [@asylauftraege](https://twitter.com/asylauftraege) twittert die Großaufträge deutscher Behörden, die im Zusammenhang mit Flüchtlingen und Asylbewerbern stehen und an private Firmen vergeben werden. Diese Großaufträge werden im europäischen Ausschreibungsverzeichnis [TED](http://ted.europa.eu) veröffentlicht. TED bietet einen [RSS-Feed](http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de) zu speziellen Themen und Anfragen an. Dieser RSS-Feed wird gescrapt und neue Einträge getwittert.
 
-**Artikel:** tbd
-**FAQ:** tbd
+**Artikel** http://www.br.de/extra/br-data/asyl-grossauftraege-karte-100.html
+**FAQ:** http://www.br.de/extra/br-data/twitter-bot-asylauftraege-100.html
 **Twitter:** [@asylauftraege](https://twitter.com/asylauftraege)
 
 ### Verwendung
