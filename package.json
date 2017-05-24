@@ -19,7 +19,7 @@
     "request": "^2.65.0",
     "twit": "^2.1.1"
   },
-  "engines": {
-    "node": "*"
+  "devDependencies": {
+    "eslint-config-esnext": "^1.6.0"
   }
 }
