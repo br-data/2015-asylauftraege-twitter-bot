@@ -1,245 +1,245 @@
-var fs = require('fs');
-var path = require('path');
-var url = require('url');
-var request = require('request');
-var cheerio = require('cheerio');
-var htmlparser = require('htmlparser');
-var Twit = require('twit');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const request = require('request');
+const cheerio = require('cheerio');
+const htmlparser = require('htmlparser');
+const Twit = require('twit');
+
+const config = require('./config');
 
 (function rssToTwitter() {
-    'use strict';
+  // Configuration
+  const rssUrl = process.env.RSS_FEED || config.RSS_FEED;
+  const twitter = new Twit({
 
-    // Configuration
-    var rssUrl = 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de';
-    var twitter = new Twit({
+    consumer_key: process.env.CONSUMER_KEY || config.CONSUMER_KEY,
+    consumer_secret: process.env.CONSUMER_SECRET || config.CONSUMER_SECRET,
+    access_token: process.env.ACCESS_TOKEN || config.ACCESS_TOKEN,
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET || config.ACCESS_TOKEN_SECRET
+  });
 
-        consumer_key: process.env.CONSUMER_KEY                  || 'zxgsFhtGxMlWwae7HToHfdXeD',
-        consumer_secret: process.env.CONSUMER_SECRET            || 'OaZwjigNLSqP6Na7jb18JDqP79LES7514byivUmnFE81cHyYFW',
-        access_token: process.env.ACCESS_TOKEN                  || '4010493202-A1zN0IpJyA1P8Hrm4rXJUR4YwgzayxOueTOuPno',
-        access_token_secret: process.env.ACCESS_TOKEN_SECRET    || 'UZUVMCeFw6c5cup14HxdCJtX76l3LNmZcAd7anZxhBAIi'
+  // Get date of latest posted article
+  const lastPostedDate = getPostedDate();
+
+  const handler = new htmlparser.RssHandler();
+  const parser = new htmlparser.Parser(handler);
+
+  (function init() {
+
+    getFeed(handleFeed);
+    setPostedDate(new Date());
+  })();
+
+  function handleFeed(items) {
+
+    for (const key in items) {
+
+      items[key].title = beautifyTitle(items[key].title);
+      items[key].location = getLocation(items[key].title);
+      items[key].title = removeLocation(items[key].title);
+      items[key].company = getItemInfo(items[key], handleItem);
+    }
+  }
+
+  function handleItem(item) {
+
+    // Tweet only new entries
+    if (item.company && item.date >= lastPostedDate) {
+
+      shortenTweet(item, 160, postToTwitter);
+    }
+  }
+
+  // Get the RSS feed
+  function getFeed(callback) {
+
+    let items;
+    let itemsToPost = [];
+
+    request(rssUrl, (err, res, body) => {
+
+      if (!err && res.statusCode == 200){
+
+        parser.parseComplete(body);
+
+        items = handler.dom.items;
+        itemsToPost = [];
+
+        for (const key in items) {
+
+          itemsToPost.push(items[key]);
+        }
+
+        callback(itemsToPost);
+
+      } else {
+
+        console.log(err.message);
+      }
     });
+  }
 
-    // Get date of latest posted article
-    var lastPostedDate = getPostedDate();
+  // Get company name and publication date from the tender page
+  function getItemInfo(item, callback) {
 
-    var handler = new htmlparser.RssHandler();
-    var parser = new htmlparser.Parser(handler);
+    item.company = '';
+    item.date = '';
 
-    (function init() {
+    request(item.link, { jar: true }, (err, res, body) => {
 
-        getFeed(handleFeed);
-        setPostedDate(new Date());
-    })();
+      if (!err && res.statusCode == 200) {
 
-    function handleFeed(items) {
+        const $ = cheerio.load(body);
 
-        for (var key in items) {
+        const addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
+        let dateEl = $('.date').text();
 
-            items[key].title = beautifyTitle(items[key].title);
-            items[key].location = getLocation(items[key].title);
-            items[key].title = removeLocation(items[key].title);
-            items[key].company = getItemInfo(items[key], handleItem);
+        if (addressEl) {
+
+          item.company = $('<p>').html(addressEl.split('<br>')[0]).text();
         }
-    }
 
-    function handleItem(item) {
+        if (dateEl) {
 
-        // Tweet only new entries 
-        if (item.company && item.date >= lastPostedDate) {
-
-            shortenTweet(item, 160, postToTwitter);
+          dateEl = dateEl.split('/').reverse().join();
+          item.date = new Date(dateEl);
         }
-    }
 
-    // Get the RSS feed
-    function getFeed(callback) {
+        callback(item);
 
-        var items;
-        var itemsToPost = [];
+      } else {
 
-        request(rssUrl, function (err, res, body) {
+        console.log(err.message);
+      }
+    });
+  }
 
-            if (!err && res.statusCode == 200){
-                
-                parser.parseComplete(body);
+  function shortenTweet(item, length, callback) {
 
-                items = handler.dom.items;
-                itemsToPost = [];
+    item.tweet = `#${item.location}: Auftrag für ${item.company}: ${item.title} ${item.link} #asyl`;
 
-                for (var key in items) {
+    if (item.tweet.length > length) {
 
-                    itemsToPost.push(items[key]);
-                }
+      let isShortable = true;
 
-                callback(itemsToPost);
+      if (item.title && isShortable) {
 
-            } else {
+        const newTitle = item.title.split(' ').slice(0, -2).join(' ').concat(' …').trim();
 
-                console.log(err.message);
-            }
-        });
-    }
+        if (newTitle.length && newTitle.length < item.title.length) {
 
-    // Get company name and publication date from the tender page
-    function getItemInfo(item, callback) {
-
-        item.company = '';
-        item.date = '';
-
-        request(item.link, { jar: true }, function (err, res, body) {
-
-            if (!err && res.statusCode == 200) {
-
-                var $ = cheerio.load(body);
-
-                var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
-                var dateEl = $('.date').text();
-
-                if (addressEl) {
-
-                    item.company = $('<p>').html(addressEl.split('<br>')[0]).text();
-                }
-
-                if (dateEl) {
-
-                    dateEl = dateEl.split('/').reverse().join();
-                    item.date = new Date(dateEl);
-                }
-
-                callback(item);
-
-            } else {
-
-                console.log(err.message);
-            }
-        });
-    }
-
-    function shortenTweet(item, length, callback) {
-
-        item.tweet = '#' + item.location + ': Auftrag für ' + item.company + ': ' + item.title + ' ' + item.link + ' #asyl';
-
-        if (item.tweet.length > length) {
-
-            var isShortable = true;
-
-            if (item.title && isShortable) {
-
-                var newTitle = item.title.split(' ').slice(0, -2).join(' ').concat(' …').trim();
-
-                if (newTitle.length && newTitle.length < item.title.length) {
-
-                    item.title = newTitle;
-                } else {
-
-                    isShortable = false;
-                }
-            }
-
-            if (item.company && !isShortable) {
-
-                item.company = item.company.split(' ').slice(0, -1).join(' ').concat(' …').trim();
-            }
-
-            shortenTweet(item, length, callback);
+          item.title = newTitle;
         } else {
 
-            callback(item);
+          isShortable = false;
         }
+      }
+
+      if (item.company && !isShortable) {
+
+        item.company = item.company.split(' ').slice(0, -1).join(' ').concat(' …').trim();
+      }
+
+      shortenTweet(item, length, callback);
+    } else {
+
+      callback(item);
+    }
+  }
+
+  function postToTwitter(item) {
+
+    twitter.post('statuses/update', { status: item.tweet }, (err, data, res) => {
+
+      console.log("New tweet: ", item.tweet);
+
+      if (err) { console.log(err); }
+    });
+  }
+
+  // Get the last updated date from file
+  function getPostedDate() {
+
+    let dateString;
+    const location = path.join(__dirname, '/lastPostedDate.txt');
+
+    try {
+
+      dateString = fs.readFileSync(location, 'utf8');
+    } catch (err) {
+
+      if (err.code === 'ENOENT') {
+
+        console.log('Cannot read ', location);
+      } else {
+
+        throw err;
+      }
     }
 
-    function postToTwitter(item) {
+    return new Date(dateString);
+  }
 
-        twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
-        
-            console.log("New tweet: ", item.tweet);
+  // Save the last updated date to file
+  function setPostedDate(date) {
 
-            if (err) { console.log(err); }
-        });
+    const location = path.join(__dirname, '/lastPostedDate.txt');
+
+    try {
+
+      fs.writeFileSync(location, date, 'utf8');
+    } catch (err) {
+
+      if (err.code === 'ENOENT') {
+
+        console.log('Cannot write ', location);
+      } else {
+
+        throw err;
+      }
     }
+  }
 
-    // Get the last updated date from file
-    function getPostedDate() {
+  function beautifyTitle(str) {
 
-        var dateString;
-        var location = path.join(__dirname, '/lastPostedDate.txt');
+    return str.replace(/.*\d:\s/, '');
+  }
 
-        try {
+  function getLocation(str) {
 
-            dateString = fs.readFileSync(location, 'utf8');
-        } catch (err) {
+    str = str.match(/Deutschland-(.*?):/);
 
-            if (err.code === 'ENOENT') {
+    return str ? str[1] : '';
+  }
 
-                console.log('Cannot read ', location);
-            } else {
+  function removeLocation(str) {
 
-                throw err;
-            }
-        }
+    return str.replace(/Deutschland-(.*?):\s/, '');
+  }
 
-        return new Date(dateString);
-    }
+  function beautifyCompanyName(str) {
 
-    // Save the last updated date to file
-    function setPostedDate(date) {
+    str.replace('foo', '');
 
-        var location = path.join(__dirname, '/lastPostedDate.txt');
+    return str;
+  }
 
-        try {
+  // Sort dates
+  function compareDates(a, b) {
 
-            fs.writeFileSync(location, date, 'utf8');
-        } catch (err) {
+    const aDate = new Date(a.pubDate);
+    const bDate = new Date(b.pubDate);
 
-            if (err.code === 'ENOENT') {
+    if (aDate < bDate) { return -1; }
+    if (aDate > bDate) { return 1; }
 
-                console.log('Cannot write ', location);
-            } else {
+    return 0;
+  }
 
-                throw err;
-            }
-        }
-    }
+  // Clone an object
+  function clone(obj) {
 
-    function beautifyTitle(str) {
-
-        return str.replace(/.*\d:\s/, '');
-    }
-
-    function getLocation(str) {
-
-        str = str.match(/Deutschland-(.*?):/);
-
-        return str ? str[1] : '';
-    }
-
-    function removeLocation(str) {
-
-        return str.replace(/Deutschland-(.*?):\s/, '');
-    }
-
-    function beautifyCompanyName(str) {
-
-        str.replace('foo', '');
-
-        return str;
-    }
-
-    // Sort dates
-    function compareDates(a, b) {
-
-        var aDate = new Date(a.pubDate);
-        var bDate = new Date(b.pubDate);
-
-        if (aDate < bDate) { return -1; }
-        if (aDate > bDate) { return 1; }
-
-        return 0;
-    }
-
-    // Clone an object
-    function clone(obj) {
-
-        return JSON.parse(JSON.stringify(obj));
-    } 
+    return JSON.parse(JSON.stringify(obj));
+  }
 })();
