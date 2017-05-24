@@ -1,3 +1,6 @@
+### Project ###
+config.production.js
+
 ### Node ###
 node_modules
 logs
