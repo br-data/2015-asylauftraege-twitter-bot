@@ -10,7 +10,7 @@ var Twit = require('twit');
     'use strict';
 
     // Configuration
-    var rssUrl = 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/239154/de';
+    var rssUrl = 'http://ted.europa.eu/TED/rss/CustomRSSFeedGenerator/295540/de';
     var twitter = new Twit({
 
         consumer_key: process.env.CONSUMER_KEY                  || 'zxgsFhtGxMlWwae7HToHfdXeD',
@@ -44,7 +44,7 @@ var Twit = require('twit');
 
     function handleItem(item) {
 
-        // Tweet only new entries 
+        // Tweet only new entries
         if (item.company && item.date >= lastPostedDate) {
 
             shortenTweet(item, 160, postToTwitter);
@@ -60,7 +60,7 @@ var Twit = require('twit');
         request(rssUrl, function (err, res, body) {
 
             if (!err && res.statusCode == 200){
-                
+
                 parser.parseComplete(body);
 
                 items = handler.dom.items;
@@ -92,12 +92,12 @@ var Twit = require('twit');
 
                 var $ = cheerio.load(body);
 
-                var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().children().html();
+                var addressEl = $('.mlioccur > .timark:contains("Wirtschaftsteilnehmers")').next().html();
                 var dateEl = $('.date').text();
 
                 if (addressEl) {
 
-                    item.company = $('<p>').html(addressEl.split('<br>')[0]).text();
+                    item.company = $('<p>').html(addressEl.split('<br>')[0]).text() || '';
                 }
 
                 if (dateEl) {
@@ -151,8 +151,8 @@ var Twit = require('twit');
     function postToTwitter(item) {
 
         twitter.post('statuses/update', { status: item.tweet }, function (err, data, res) {
-        
-            console.log("New tweet: ", item.tweet);
+
+            console.log('New tweet: ', item.tweet);
 
             if (err) { console.log(err); }
         });
@@ -241,5 +241,5 @@ var Twit = require('twit');
     function clone(obj) {
 
         return JSON.parse(JSON.stringify(obj));
-    } 
+    }
 })();
